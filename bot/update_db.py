@@ -21,7 +21,7 @@ class Parser(HTMLParser):
 			f=open(self.file,"a+")
 			for name,val in attrs:
 				if name == "href":
-					f.write(val)
+					f.write("https://cses.fi/"+val)
 			f.close()
 			self.lasttypef="Problemname"
 		elif tag == "small" and self.lasttypef == "Problem":
