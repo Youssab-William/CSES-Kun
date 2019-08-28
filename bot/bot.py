@@ -72,4 +72,4 @@ async def problem(ctx, l: int, r: int):
 		return
 	await ctx.send("success")
 
-bot.run('NjE2MjkyNjAyNTUxMjA1OTAw.XWb-hg.Tk5hRmcaatkMFDYiz5CH5uOw_B8')
+bot.run('token')
