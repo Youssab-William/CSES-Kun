@@ -60,5 +60,16 @@ async def cool(ctx):
 async def _bot(ctx):
     """Is the bot cool?"""
     await ctx.send('Yes, the bot is cool.')
+#code starting from here
 
-bot.run('token')
+@bot.command()
+async def problem(ctx, l: int, r: int):
+	if r < l:
+		await ctx.send("First number must be <= second number")
+		return
+	if(l < 0):
+		await ctx.send("Numbers should be >= 0")
+		return
+	await ctx.send("success")
+
+bot.run('NjE2MjkyNjAyNTUxMjA1OTAw.XWb-hg.Tk5hRmcaatkMFDYiz5CH5uOw_B8')
