@@ -93,6 +93,28 @@ def pick1(l, r, solved2):
     for prb in tpc:
       problems.append(prb)
   return problems
+
+def pick(problems,solved2):
+    chosen=[]
+    if len(problems) == 0:
+        return chosen
+    graph = {}
+    co=0
+    for typ,l,r in problems:
+        allp = getall(typ,l,r,solved2)
+        if len(allp) == 0:
+            continue
+        random.shuffle(allp)
+        graph[co] = allp
+        co=co+1
+    if len(graph) == 0:
+        return []
+    hk = HopcroftKarp(graph)
+    max_matching = hk.maximum_matching()
+    for i in range(0,co):
+        chosen.append(max_matching[i])
+    random.shuffle(chosen)
+    return chosen
              
 @bot.command()
 async def problem(ctx, l: int, r: int):
@@ -110,3 +132,40 @@ async def problem(ctx, l: int, r: int):
         return
     random.shuffle(problems)
     await ctx.send("https://cses.fi/problemset/task/"+problems[0])
+
+@bot.command()
+async def suggest(ctx, *args: str):
+    """suggest a problem on you didn't solve which had been solved by number of users between l and r
+    """
+    if len(args) == 0:
+        await ctx.send("Provide valid arguments")
+        return
+    try:
+        n=int(args[0])
+    except:
+        await ctx.send("Provide valid arguments")
+        return
+    if len(args) != 3*n+1:
+        await ctx.send("Provide valid arguments")
+        return
+    types=[]
+    for i in range(n):
+        try:
+            topic=args[1+3*i]
+            l=int(args[2+3*i])
+            r=int(args[3+3*i])
+        except:
+            await ctx.send("Provide valid arguments")
+            return
+        topic=getTopic(topic)
+        if topic == "Error":
+            await ctx.send("Provide valid arguments")
+            return
+        types.append((topic,l,r))
+    problems=pick(types,getSolved(ctx.message.author.id))
+    if len(problems) == 0:
+        await ctx.send("Couldn't find any problems")
+        return
+    random.shuffle(problems)
+    for i in problems:
+        await ctx.send("https://cses.fi/problemset/task/"+i)
