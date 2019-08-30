@@ -66,7 +66,9 @@ async def cool(ctx):
 async def _bot(ctx):
     """Is the bot cool?"""
     await ctx.send('Yes, the bot is cool.')
-    
+
+topics=[("intro","Introductory Problems"),("sorting","Sorting and Searching"),("searching","Sorting and Searching"),("dp","Dynamic Programming"),("graph","Graph Algorithms"),("rq","Range Queries"),("tree","Tree Algorithms"),("math","Mathematics"),("string","String Algorithms"),("additional","Additional Problems")]
+ 
 def getSolved(userID):
   lst=[]
   os.system("mkdir -pv user/")
@@ -77,9 +79,6 @@ def getSolved(userID):
     lst.append(str(int(i)))
   return lst
   
-    
-topics=[("intro","Introductory Problems"),("sorting","Sorting and Searching"),("searching","Sorting and Searching"),("dp","Dynamic Programming"),("graph","Graph Algorithms"),("rq","Range Queries"),("tree","Tree Algorithms"),("math","Mathematics"),("string","String Algorithms"),("additional","Additional Problems")]
-
 #Get all problems that hadn't been solved by user in topic typ
 def getall(typ, l, r, solved2):
   problems = []
