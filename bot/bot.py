@@ -1,7 +1,9 @@
 import discord
+import os
 from discord.ext import commands
 import random
 import update_db
+from hopcroftkarp import HopcroftKarp
 
 description = '''CSES Kun a discord bot to practice cses problems'''
 bot = commands.Bot(command_prefix='?', description=description)
@@ -40,6 +42,9 @@ async def choose(ctx, *choices: str):
 @bot.command()
 async def repeat(ctx, times: int, content='repeating...'):
     """Repeats a message multiple times."""
+    if times > 10:
+        await ctx.send('I cannot repeat a word more than 10 times')
+        return 
     for i in range(times):
         await ctx.send(content)
 
@@ -61,105 +66,47 @@ async def cool(ctx):
 async def _bot(ctx):
     """Is the bot cool?"""
     await ctx.send('Yes, the bot is cool.')
-#code starting from here
-#write it here youssab
-# how r u guys so geniosity, how can I be geniosity like u guys
-@bot.command()
-async def solved(ctx , idd :int )
-	user_id = ctx.message.author.id
-  file = open("users/"+user_id+".txt","a+")
-	file.write(str(idd)+"\n")
-  await ctx.send('one more problem solved! ')
 
-topics=[("intro","Introductory Problems"),("sorting","Sorting and Searching"),("searching","Sorting and Searching"),("dp","Dynamic Programming"),("graph","Graph Algorithms"),("rq","Range Queries"),("tree","Tree Algorithms"),("math","Mathematics"),("string","String Algorithms"),("additional","Additional Problems")]
-  
-def getall(typ, l, r, solved):
+#Get all problems that hadn't been solved by user in topic typ
+def getall(typ, l, r, solved2):
   problems = []
   path = "problems/"+typ+".txt"
   file = open(path , "r")
   for problem in file.readlines(): #xD
     pnum = problem.split(' ')[0]
     pnum = pnum.split('/')[-1]
-    solvedcount=int(problems.split(' ')[1])
-    if pnum in solved:
+    solvedcount=int(problem.split(' ')[1])
+    if pnum in solved2:
       pass
-    else if solvedcount < l or solvedcount > r:
+    elif solvedcount < l or solvedcount > r:
       pass
     else:
       problems.append(pnum)
+  random.shuffle(problems)
   return problems
-    
-  
-  
-  
-def pick1(l, r, solved):
+
+#pick problems that user hadn't solved
+def pick1(l, r, solved2):
   problems = []
-  problems.append(1321) #مزاجى
-
-  
-def pick(problems,solved):
-	for typ,l,r in problems:
-		allp = get_all(typ,l,r,solved)
-		avail = []
-		for i in allp:
-			if i in solved or i in problems:
-				pass
-			else:
-				avail.append(i)
-		if len(avail) == 0:
-			pass
-		else:
-			cur=random.choice(avail)
-			problems.append(cur)
-
-  
-def getTopic(top):
-  top=top.lower()
-  for i,j in topics:
-    if top == i:
-      return j
-  return "Error"
-  
+  for tmp,typ in topics:
+    tpc = getall(typ, l, r, solved2)
+    for prb in tpc:
+      problems.append(prb)
+  return problems
+             
 @bot.command()
 async def problem(ctx, l: int, r: int):
-	if r < l:
-		await ctx.send("First number must be <= second number")
-		return
-	if(l < 0):
-		await ctx.send("Numbers should be >= 0")
-		return
-  problem = pick1(l,r,getSolved(ctx.message.author.id))
-
-@bot.command()
-async def suggest(ctx, *args: str):
-  if len(args) == 0:
-    await ctx.send("Provide valid arguments")
-    return
-  try:
-  	n=int(args[0])
-  except:
-    await ctx.send("Provide valid arguments")
-    return
-	if len(args) != 3*n+1:
-    await ctx.send("Provide valid arguments")
-    return
-  types=[]
-  for i in range(n):
-    try:
-    	topic=args[1+3*i]
-    	l=int(args[2+3*i])
-      r=int(args[3+3*i])
-    except:
-      await ctx.send("Provide valid arguments")
-    	return
-    topic=getTopic(topic)
-    if topic == "Error":
-      await ctx.send("Provide valid arguments")
-    	return
-    types.append((topic,l,r))
-  problems=pick(types,getSolved(ctx.message.author.id))
-  random.shuffle(problems)
-  for i in problems:
-    await ctx.send("https://cses.fi/problemset/task/"+i)
-  
-bot.run('token')
+    """pick a problem you didn't solve which had been solved by number of users between l and r
+    """
+    if r < l:
+        await ctx.send("First number must be <= second number")
+        return
+    if(l < 0):
+        await ctx.send("Numbers should be >= 0")
+        return
+    problems = pick1(l,r,getSolved(ctx.message.author.id))
+    if len(problems) == 0:
+        await ctx.send("couldn't find a problem")
+        return
+    random.shuffle(problems)
+    await ctx.send("https://cses.fi/problemset/task/"+problems[0])
