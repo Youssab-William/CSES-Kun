@@ -69,6 +69,14 @@ async def _bot(ctx):
 
 topics=[("intro","Introductory Problems"),("sorting","Sorting and Searching"),("searching","Sorting and Searching"),("dp","Dynamic Programming"),("graph","Graph Algorithms"),("rq","Range Queries"),("tree","Tree Algorithms"),("math","Mathematics"),("string","String Algorithms"),("additional","Additional Problems")]
  
+    
+def getTopic(top):
+  top=top.lower()
+  for i,j in topics:
+    if top == i:
+      return j
+  return "Error"
+
 def getSolved(userID):
   lst=[]
   os.system("mkdir -pv user/")
