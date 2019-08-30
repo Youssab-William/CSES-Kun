@@ -66,7 +66,17 @@ async def cool(ctx):
 async def _bot(ctx):
     """Is the bot cool?"""
     await ctx.send('Yes, the bot is cool.')
-
+    
+def getSolved(userID):
+  lst=[]
+  os.system("mkdir -pv user/")
+  os.system("touch user/"+str(userID)+".txt")
+  filef=open("user/"+str(userID)+".txt","r")
+  lines=filef.readlines()
+  for i in lines:
+    lst.append(str(int(i)))
+  return lst
+  
     
 topics=[("intro","Introductory Problems"),("sorting","Sorting and Searching"),("searching","Sorting and Searching"),("dp","Dynamic Programming"),("graph","Graph Algorithms"),("rq","Range Queries"),("tree","Tree Algorithms"),("math","Mathematics"),("string","String Algorithms"),("additional","Additional Problems")]
 
@@ -119,6 +129,33 @@ def pick(problems,solved2):
     random.shuffle(chosen)
     return chosen
              
+@bot.command()
+async def solved(ctx , idd :int ):
+    """add this problem to your solved problems list to avoid selecting it in future.
+    """
+    user_id = ctx.message.author.id
+    os.system("mkdir -pv user/")
+    os.system("touch user/"+str(user_id)+".txt")
+    file1 = open("user/"+str(user_id)+".txt","r")
+    lines=file1.readlines()
+    file1.close()
+    for i in lines:
+        x = int(i)
+        if x==idd:
+            await ctx.send('you had already solved this problem before')
+            return
+
+    solved2=[]
+    for tmp,typ in topics:
+      solved2 = getall(typ, 0, 1000000000000000000000 , solved2)
+      if str(idd) in solved2:
+        file = open("user/"+str(user_id)+".txt","a+")
+        file.write(str(idd)+"\n")
+        file.close()
+        await ctx.send('one more problem solved! ')
+        return 
+    await ctx.send('invalid problem ID')
+        
 @bot.command()
 async def problem(ctx, l: int, r: int):
     """pick a problem you didn't solve which had been solved by number of users between l and r
